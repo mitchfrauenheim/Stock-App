@@ -2,7 +2,7 @@ import React from "react";
 
 export default function RankingProfile(props) {
     return (
-        <div id="profile" className="flex relative h-12 max-w-full my-1 items-center text-sm cursor-auto bg-[#FEFFFE] group-hover:bg-gray-100">
+        <div id="profile" className="flex relative h-12 max-w-full my-1 items-center cursor-auto bg-[#FEFFFE] group-hover:bg-gray-100">
             <div id="place" className="pl-3 sm:pl-5 font-medium">
                 {props.user.place}.
             </div>
