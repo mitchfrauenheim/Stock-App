@@ -16,10 +16,21 @@ app.get("/", (req, res) => {
 })
 
 app.get("/users", (req, res) => {
-    const query = "SELECT * FROM users"
-    db.query(query, (err, data) => {
+    const q = "SELECT * FROM users"
+    db.query(q, (err, data) => {
         if (err) {
-            return res.json("Failed to fetch users from the database: " + err);
+            return res.json(err);
+        }
+        return res.json(data);
+    })
+})
+
+app.post("/users", (req, res) => {
+    const q = "INSERT INTO users (`name`,`capital`,`cash`) VALUES (?)"
+    const values = ["Mitch Frauenheim", 17000, 3000]
+    db.query(q, (err, data) => {
+        if (err) {
+            return res.json(err);
         }
         return res.json(data);
     })
