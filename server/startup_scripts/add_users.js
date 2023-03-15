@@ -22,5 +22,4 @@ db.query(q, [values], (err, data) => {
 })
 
 // import updateStockPrices from "../stocks/updateStockPrices.js";
-
 // updateStockPrices();
