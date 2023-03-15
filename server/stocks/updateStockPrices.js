@@ -1,6 +1,7 @@
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
 import axios from 'axios';
+import finnhub from 'finnhub';
 
 dotenv.config()
 const db = mysql.createPool({
@@ -16,44 +17,44 @@ async function getStockSymbols() {
     return new Promise((resolve, reject) => {
         db.query(q, (err, data) => {
             if (err) reject(err)
+
+            console.log(`INFO : Stock codes retrieved from ${process.env.DB_NAME} database.`)
             resolve(data);
         })
     })
 }
 
-async function getStockValues(symbols) {
-    try {
-        let url = 'https://api.twelvedata.com/price?symbol='
+async function getStockValues(stocks) {
 
-        for (let i=0; i < symbols.length; ++i) {
-            // Add another string to url for all codes
-            if (i > 0) { url = url + "," + symbols[i].symbol; }
-            else { url = url + symbols[i].symbol; }
-        }
-        url = url + "&apikey=" + process.env.TWELVEDATA_API_KEY
+    const api_key = finnhub.ApiClient.instance.authentications['api_key'];
+    api_key.apiKey = process.env.FINNHUB_API_KEY;
+    const finnhubClient = new finnhub.DefaultApi();
 
-        const response = await axios.get(url);
-        if (response.data.code != 200) return response.data;
-        throw response.data;
-    } catch (error) {
-        throw error;
-    }
+    const quotes = await Promise.all(stocks.map(stock => {
+        return new Promise((resolve, reject) => {
+            finnhubClient.quote(stock.symbol, (error, data, response) => {
+                if (error) reject(error);
+
+                const stockData = { symbol: stock.symbol, price: data.c }
+                resolve(stockData);
+            });
+        })
+    }))
+
+    console.log('INFO : Finnhub API calls succeeded.')
+    return quotes;
 }
 
 function updateCurrentVals(stockPrices) {
-    const formattedPrices = Object.entries(stockPrices).map(([symbol, {price}]) => ({ 
-        symbol,
-        price: Number(price)
-    }));
-
     const q = `UPDATE stocks SET current_val = CASE symbol
-               ${formattedPrices.map((stock) => `WHEN '${stock.symbol}' THEN ${stock.price}`).join('\n')}
+               ${stockPrices.map((stock) => `WHEN '${stock.symbol}' THEN ${stock.price}`).join('\n')}
                END
-               WHERE symbol IN (${formattedPrices.map((stock) => `'${stock.symbol}'`).join(', ')})`
+               WHERE symbol IN (${stockPrices.map((stock) => `'${stock.symbol}'`).join(', ')})`
 
     return new Promise((resolve, reject) => {
         db.query(q, (err, result) => {
             if (err) reject(err);
+            console.log(`INFO : Stock prices updated in ${process.env.DB_NAME} database.`)
             resolve(result);
         })
     })
@@ -62,17 +63,18 @@ function updateCurrentVals(stockPrices) {
 async function updateStockPrices() {
     try {
         // Get all stock abbreviations from database
-        const symbols = await getStockSymbols();
+        const stocks = await getStockSymbols();
 
         // Get stock current trading values from twelvedata api
-        const stockPrices = await getStockValues(symbols);
+        const stockPrices = await getStockValues(stocks);
 
         // Update stock current trading values in database
-        await updateCurrentVals(stockPrices);
-
+        const result = await updateCurrentVals(stockPrices);
+        // console.log(result.info ? result.info : result);
+        console.log('\x1b[32m%s\x1b[0m', 'SUCCESS', `: Stock prices successfully updated in ${process.env.DB_NAME} database.`)
     } catch (err) {
-        console.log("ERROR:")
-        console.log(err);
+        err = ": " + String(err)
+        console.log('\x1b[31m%s\x1b[0m', 'ERROR', err);
     }
 }
 

@@ -10,9 +10,19 @@ const db = mysql.createPool({
     database: process.env.DB_NAME
 })
 
-const q = "INSERT INTO users (`name`,`capital`,`cash`) VALUES (?)"
-const values = ["Mitch Frauenheim", 20000, 3000]
-db.query(q, [values], (err, data) => {
+const users = [
+    { name: "Bob Frauenheim", capital: 20000, cash: 5000 },
+    { name: "Greg Frauenheim", capital: 20000, cash: 5000 },
+    { name: "Sandy Frauenheim", capital: 20000, cash: 5000 },
+    { name: "Dan Frauenheim", capital: 20000, cash: 0 },
+    { name: "Bill Frauenheim", capital: 20000, cash: 0 },
+    { name: "Mitch Frauenheim", capital: 20000, cash: 0 },
+]
+
+const placeholders = users.map(() => "(?, ?, ?)").join(", ");
+const q = `INSERT INTO users (\`name\`,\`capital\`,\`cash\`) VALUES ${placeholders}`;
+const values = users.flatMap(user => [user.name, user.capital, user.cash]);
+db.query(q, values, (err, data) => {
     if (err) {
         console.log(err)
         return err
@@ -20,6 +30,3 @@ db.query(q, [values], (err, data) => {
     console.log(data)
     return data
 })
-
-// import updateStockPrices from "../stocks/updateStockPrices.js";
-// updateStockPrices();
