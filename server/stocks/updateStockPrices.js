@@ -34,8 +34,10 @@ async function getStockValues(stocks) {
     const quotes = await Promise.all(stocks.map(stock => {
         return new Promise((resolve, reject) => {
             finnhubClient.quote(stock.symbol, (error, data, response) => {
-                if (error) reject(error);
-
+                if (error){
+                    console.log('\x1b[31m%s\x1b[0m', 'ERROR', `: Error retrieving ${stock.symbol} stock price.`);
+                    reject(error);
+                }
                 const stockData = { symbol: stock.symbol, price: data.c }
                 resolve(stockData);
             });
@@ -73,12 +75,14 @@ async function updateStockPrices() {
 
         // Update stock current trading values in database
         await updateCurrentVals(stockPrices);
-        // console.log(result.info ? result.info : result);
         console.log('\x1b[32m%s\x1b[0m', 'SUCCESS', `: Stock prices successfully updated in ${process.env.DB_NAME} database.`)
+    
     } catch (err) {
         err = ": " + String(err)
         console.log('\x1b[31m%s\x1b[0m', 'ERROR', err);
     }
 }
+
+updateStockPrices();
 
 export default updateStockPrices;

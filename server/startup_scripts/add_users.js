@@ -24,9 +24,11 @@ const q = `INSERT INTO users (\`name\`,\`capital\`,\`cash\`) VALUES ${placeholde
 const values = users.flatMap(user => [user.name, user.capital, user.cash]);
 db.query(q, values, (err, data) => {
     if (err) {
-        console.log(err)
+        err = ": " + String(err)
+        console.log('\x1b[31m%s\x1b[0m', 'ERROR', err);
         return err
     }
+    console.log('\x1b[32m%s\x1b[0m', 'SUCCESS', `Successfully added ${users.length} users to the ${process.env.DB_NAME} database.`);
     console.log(data)
     return data
 })
