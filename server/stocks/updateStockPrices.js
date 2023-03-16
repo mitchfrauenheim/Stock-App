@@ -16,8 +16,9 @@ async function getStockSymbols() {
 
     return new Promise((resolve, reject) => {
         db.query(q, (err, data) => {
-            if (err) reject(err)
-
+            if (err) {
+                reject(err);
+            }
             console.log(`INFO : Stock codes retrieved from ${process.env.DB_NAME} database.`)
             resolve(data);
         })
@@ -41,7 +42,7 @@ async function getStockValues(stocks) {
         })
     }))
 
-    console.log('INFO : Finnhub API calls succeeded.')
+    console.log('INFO : Finnhub API calls succeeded.');
     return quotes;
 }
 
@@ -53,8 +54,10 @@ function updateCurrentVals(stockPrices) {
 
     return new Promise((resolve, reject) => {
         db.query(q, (err, result) => {
-            if (err) reject(err);
-            console.log(`INFO : Stock prices updated in ${process.env.DB_NAME} database.`)
+            if (err) {
+                reject(err);
+            }
+            console.log(`INFO : Stock prices updated in ${process.env.DB_NAME} database.`);
             resolve(result);
         })
     })
@@ -69,7 +72,7 @@ async function updateStockPrices() {
         const stockPrices = await getStockValues(stocks);
 
         // Update stock current trading values in database
-        const result = await updateCurrentVals(stockPrices);
+        await updateCurrentVals(stockPrices);
         // console.log(result.info ? result.info : result);
         console.log('\x1b[32m%s\x1b[0m', 'SUCCESS', `: Stock prices successfully updated in ${process.env.DB_NAME} database.`)
     } catch (err) {
