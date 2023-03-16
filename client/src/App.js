@@ -1,9 +1,20 @@
 import './tailwind.css';
+import { useEffect, useState } from 'react';
 
 import Leaderboard from "./components/Leaderboard";
 
 
 export default function App() {
+	const [users, setUsers] = useState(null);
+
+	useEffect(() => {
+		fetch("/users")
+			.then((res) => res.json())
+			.then((data) => setUsers(data));
+	}, []);
+
+	console.log(users);
+
 	return (
 		<div id="application">
 			<div id="page-wrapper" className="flex flex-row w-screen h-screen overscroll-auto overflow-hidden bg-white font-inter text-slate-800">
