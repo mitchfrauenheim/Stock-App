@@ -17,6 +17,7 @@ async function getStockSymbols() {
         db.query(q, (err, data) => {
             if (err) {
                 reject(err);
+                return;
             }
             console.log(`INFO : Stock codes retrieved from ${process.env.DB_NAME} database.`);
             resolve(data);
@@ -33,8 +34,9 @@ async function getStockValues(stocks) {
         return new Promise((resolve, reject) => {
             finnhubClient.quote(stock.symbol, (error, data, response) => {
                 if (error) {
-                    console.log('\x1b[31m%s\x1b[0m', 'ERROR', `: Error retrieving ${stock.symbol} stock price.`);
+                    // console.log('\x1b[31m%s\x1b[0m', 'ERROR', `: Error retrieving ${stock.symbol} stock price.`);
                     reject(error);
+                    return;
                 }
                 const stockData = { symbol: stock.symbol, price: data.c }
                 resolve(stockData);
@@ -56,6 +58,7 @@ function setStockPrices(stockPrices) {
         db.query(q, (err, result) => {
             if (err) {
                 reject(err);
+                return;
             }
             console.log(`INFO : Stock prices updated in ${process.env.DB_NAME} database.`);
             resolve(result);

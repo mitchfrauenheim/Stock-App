@@ -9,42 +9,6 @@ const db = mysql.createPool({
     database: process.env.DB_NAME
 })
 
-// async function getStockTotals(users) {
-//     const q = `SELECT user_id, SUM(shares * current_val) AS stocks_value, users.cash
-//                FROM stocks
-//                JOIN users ON stocks.user_id = users.id
-//                GROUP BY stocks.user_id`;
-
-//     return new Promise((resolve, reject) => {
-//         db.query(q, (err, data) => {
-//             if (err) {
-//                 reject(err);
-//             }
-//             console.log(`INFO : stock vals retrieved from ${process.env.DB_NAME} database.`);
-//             resolve(data);
-//         })
-//     })
-// }
-
-// async function setUserCapital() {
-//     const q = `UPDATE users
-//                SET capital = cash + (
-//                 SELECT SUM(shares * current_val)
-//                 FROM stocks
-//                 WHERE stocks.user_id = users.id
-//                )`;
-
-//     return new Promise((resolve, reject) => {
-//         db.query(q, (err, data) => {
-//             if (err) {
-//                 reject(err);
-//             }
-//             console.log("succeeded")
-//             resolve(data);
-//         })
-//     })
-// }
-
 async function updateUserCapital() {
     try {
         const q = `UPDATE users
@@ -58,6 +22,7 @@ async function updateUserCapital() {
             db.query(q, (err, data) => {
                 if (err) {
                     reject(err);
+                    return;
                 }
                 console.log('\x1b[32m%s\x1b[0m', 'SUCCESS', `: User capital successfully updated in ${process.env.DB_NAME} database.`)
                 resolve(data);

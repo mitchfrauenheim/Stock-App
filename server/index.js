@@ -20,10 +20,17 @@ app.get("/", (req, res) => {
 })
 
 app.get("/users", async (req, res) => {
-    await updateStockPrices();
-    await updateUserCapital();
+    try {
+        await updateStockPrices();
+        await updateUserCapital();
+        const data = await getUsers();
 
-    data = await getUsers();
+        return res.status(200).send(data);
+    } catch (err) {
+        err = ": " + String(err);
+        console.log('\x1b[31m%s\x1b[0m', 'ERROR', err);
+        return res.status(500).send('Server Error')
+    }
 })
 
 // app.post("/users", (req, res) => {
