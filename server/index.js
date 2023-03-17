@@ -2,6 +2,10 @@ import express from 'express';
 import mysql from 'mysql2';
 import cors from 'cors';
 
+import updateStockPrices from './updateStockPrices.js';
+import updateUserCapital from './updateUserCapital.js';
+import getUsers from './getUsers.js';
+
 const app = express()
 
 const db = mysql.createPool({
@@ -15,16 +19,11 @@ app.get("/", (req, res) => {
     res.json("Hello this is the backend.");
 })
 
-app.get("/users", (req, res) => {
-    const q = "SELECT * FROM users"
-    db.query(q, (err, data) => {
-        if (err) {
-            err = ": " + String(err);
-            console.log('\x1b[31m%s\x1b[0m', 'ERROR', err);
-            return res.json(err);
-        }
-        return res.json(data);
-    })
+app.get("/users", async (req, res) => {
+    await updateStockPrices();
+    await updateUserCapital();
+
+    data = await getUsers();
 })
 
 // app.post("/users", (req, res) => {

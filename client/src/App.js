@@ -16,7 +16,7 @@ export default function App() {
 	console.log(users);
 
 	return (
-		<div id="application">
+		// <div id="application">
 			<div id="page-wrapper" className="flex flex-row w-screen h-screen overscroll-auto overflow-hidden bg-white font-inter text-slate-800">
 				<div id="left-bar" className="flex flex-col w-96 ml-3">
 					<div id="left-header" className="flex h-24 mb-2">
@@ -58,7 +58,7 @@ export default function App() {
 					</div>
 				</div>
 			</div>
-		</div>
+		// </div>
 	);
 }
 
