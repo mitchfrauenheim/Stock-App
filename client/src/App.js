@@ -8,12 +8,10 @@ export default function App() {
 	const [users, setUsers] = useState(null);
 
 	useEffect(() => {
-		if (users == null) {
-			fetch("/users")
-				.then((res) => res.json())
-				.then((data) => setUsers(data));
-		}
-	}, [users]);
+		fetch("/users")
+			.then((res) => res.json())
+			.then((data) => setUsers(data));
+	}, []);
 
 	console.log(users);
 
@@ -24,7 +22,7 @@ export default function App() {
 				<div id="left-header" className="flex h-24 mb-2">
 				</div>
 				<div id="left-content" className="flex flex-col flex-grow justify-between">
-					<Leaderboard />
+					<Leaderboard users={users} />
 					<div id="footer" className="flex text-xs justify-center mb-10 text-gray-400">
 						Copyright &#169; 2023 Mitch Frauenheim.
 					</div>

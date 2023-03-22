@@ -6,7 +6,7 @@ import RankingProfile from "./RankingProfile";
 import { users } from "../data"
 
 
-function Leaderboard() {
+function Leaderboard(props) {
     return (
         <div id="leaderboard-wrapper" className="relative w-80 sm:w-full h-full bg-white rounded-md">
             <div id="header" className="sticky pb-6 top-0 border-b">
@@ -15,13 +15,17 @@ function Leaderboard() {
                 </div>
             </div>
             <div id="profiles-wrapper" className="relative rounded-lg">
-                {users.map(user => (
-                    <div key={user.name} className="group hover:bg-gray-100">
-                        <div className="mx-3 border-b">
-                            <ProfilePopper user={user} />
+                {props.users ? (
+                    props.users.map((user, i) => (
+                        <div key={i} className="group hover:bg-gray-100">
+                            <div className="mx-3 border-b">
+                                <ProfilePopper user={user} place={i + 1} />
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                ) : (
+                    <div>Users not yet retrieved.</div>
+                )}
             </div>
         </div>
     );

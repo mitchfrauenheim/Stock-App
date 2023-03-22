@@ -19,7 +19,7 @@ async function getUsers() {
                     reject(err);
                     return;
                 }
-                data.sort((a, b) => a.capital - b.capital);
+                data.sort((a, b) => b.capital - a.capital);
                 resolve(data);
             })
         })

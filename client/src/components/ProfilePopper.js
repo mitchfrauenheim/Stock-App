@@ -8,7 +8,7 @@ import { usePopper } from 'react-popper';
 export default function ProfilePopper(props) {
     let [referenceElement, setReferenceElement] = useState()
     let [popperElement, setPopperElement] = useState()
-    let placement = props.user.place < 3 ? 'right-start' : props.user.place < 5 ? 'right' : 'right-end'
+    let placement = props.place < 3 ? 'right-start' : props.place < 5 ? 'right' : 'right-end'
     let { styles, attributes } = usePopper(referenceElement, popperElement, {
         placement: placement,
         modifiers: [
@@ -24,7 +24,7 @@ export default function ProfilePopper(props) {
     return (
         <Popover className="relative">
             <Popover.Button ref={setReferenceElement} className="w-full focus:outline-none">
-                <RankingProfile key={props.user.place} user={props.user} />
+                <RankingProfile key={props.place} user={props.user} place={props.place} />
             </Popover.Button>
             <Transition
                 enter="transition duration-100 ease-out"
@@ -32,7 +32,7 @@ export default function ProfilePopper(props) {
                 enterTo="transform scale-100 opacity-100"
                 leave="transition duration-75 ease-out"
                 leaveFrom="transform scale-100 opacity-100"
-                leaveTo="transform scale-95 opacity-0"    
+                leaveTo="transform scale-95 opacity-0"
             >
                 <Popover.Panel
                     ref={setPopperElement}
