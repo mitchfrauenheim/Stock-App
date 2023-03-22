@@ -2,7 +2,7 @@ import React from "react";
 
 export default function RankingProfile(props) {
     const firstName = props.user.name.split(' ')[0];
-    const formattedCapital = Number(props.user.capital).toLocaleString();
+    const formattedCapital = Number(props.user.capital).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     return (
         <div id="profile" className="flex relative h-12 max-w-full my-1 items-center cursor-auto bg-[#FEFFFE] group-hover:bg-gray-100">

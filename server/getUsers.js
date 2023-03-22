@@ -1,5 +1,7 @@
-import mysql from 'mysql2';
+import mysql, { format } from 'mysql2';
 import dotenv from 'dotenv';
+
+import formatUserStocks from './formatUserStocks.js';
 
 dotenv.config();
 const db = mysql.createPool({
@@ -11,7 +13,11 @@ const db = mysql.createPool({
 
 async function getUsers() {
     try {
-        const q = "SELECT * FROM users";
+        // const q = "SELECT * FROM users";
+        const q = `SELECT u.id, u.name, u.capital, u.cash, GROUP_CONCAT(CONCAT(s.symbol, ':', s.current_val, ':', s.shares) SEPARATOR ', ') as stocks
+                   FROM users u
+                   JOIN stocks s on u.id = s.user_id
+                   GROUP BY u.id`;
 
         return new Promise((resolve, reject) => {
             db.query(q, (err, data) => {
@@ -20,6 +26,8 @@ async function getUsers() {
                     return;
                 }
                 data.sort((a, b) => b.capital - a.capital);
+                data = formatUserStocks(data);
+                // console.log(data[1].stocks[0])
                 resolve(data);
             })
         })
@@ -28,5 +36,7 @@ async function getUsers() {
         console.log('\x1b[31m%s\x1b[0m', 'ERROR', err);
     }
 }
+
+getUsers();
 
 export default getUsers;
