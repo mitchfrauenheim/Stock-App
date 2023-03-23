@@ -15,8 +15,6 @@ const CenteredMetric = ({ dataWithArc, centerX, centerY }) => {
         total += Number(datum.value)
     })
 
-    // total
-
     return (
         <text
             x={centerX}

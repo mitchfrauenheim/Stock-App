@@ -6,7 +6,7 @@ export default function RankingProfile(props) {
 
     return (
         <div id="profile" className="flex relative h-12 max-w-full my-1 items-center cursor-auto bg-[#FEFFFE] group-hover:bg-gray-100">
-            <div id="place" className="pl-3 sm:pl-5 font-medium">
+            <div id="place" className="pl-3 sm:pl-5 font-medium w-9">
                 {props.place}.
             </div>
             <div id="name" className="pl-3 text-slate-600 group-hover:text-gray-500">

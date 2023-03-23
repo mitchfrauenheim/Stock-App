@@ -1,18 +1,24 @@
 import express from 'express';
 import mysql from 'mysql2';
+import dotenv from 'dotenv';
 import cors from 'cors';
 
 import updateStockPrices from './updateStockPrices.js';
 import updateUserCapital from './updateUserCapital.js';
 import getUsers from './getUsers.js';
 
+dotenv.config();
+
 const app = express()
+const port = process.env.PORT || 3001;
+
+app.use(cors())
 
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'Ilikepie9!',
-    database: 'stock_app'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME
 })
 
 app.get("/", (req, res) => {
@@ -42,6 +48,6 @@ app.get("/users", async (req, res) => {
 //     })
 // })
 
-app.listen(3001, () => {
-    console.log("Hello world! :)");
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 })
