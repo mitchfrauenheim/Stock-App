@@ -1,16 +1,15 @@
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
 
+import connectDb from './connectDb.js';
+
 dotenv.config();
-const db = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME
-})
 
 async function updateUserCapital() {
+    let connection;
     try {
+        connection = await connectDb('updateUserCapital.js');
+
         const q = `UPDATE users
         SET capital = cash + (
          SELECT SUM(shares * current_val)
@@ -19,7 +18,7 @@ async function updateUserCapital() {
         )`;
 
         return new Promise((resolve, reject) => {
-            db.query(q, (err, data) => {
+            connection.query(q, (err, data) => {
                 if (err) {
                     reject(err);
                     return;
@@ -31,6 +30,13 @@ async function updateUserCapital() {
     } catch (err) {
         err = ": " + String(err);
         console.log('\x1b[31m%s\x1b[0m', 'ERROR', err);
+    } {
+        if (connection) {
+            connection.release();
+            console.log('INFO : updateUserCapital.js: Database connection manually released.');
+        } else {
+            console.log('INFO : updateUserCapital.js: Database connection automatically released.');
+        }
     }
 }
 

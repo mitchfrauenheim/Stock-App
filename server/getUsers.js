@@ -2,25 +2,21 @@ import mysql, { format } from 'mysql2';
 import dotenv from 'dotenv';
 
 import formatUserStocks from './formatUserStocks.js';
+import connectDb from './connectDb.js';
 
 dotenv.config();
-const db = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME
-})
 
 async function getUsers() {
+    let connection;
     try {
-        // const q = "SELECT * FROM users";
+        connection = await connectDb('getUsers.js');
         const q = `SELECT u.id, u.name, u.capital, u.cash, GROUP_CONCAT(CONCAT(s.symbol, ':', s.current_val, ':', s.shares) SEPARATOR ', ') as stocks
                    FROM users u
                    JOIN stocks s on u.id = s.user_id
                    GROUP BY u.id`;
 
         return new Promise((resolve, reject) => {
-            db.query(q, (err, data) => {
+            connection.query(q, (err, data) => {
                 if (err) {
                     reject(err);
                     return;
@@ -34,9 +30,16 @@ async function getUsers() {
     } catch (err) {
         err = ": " + String(err);
         console.log('\x1b[31m%s\x1b[0m', 'ERROR', err);
+    } {
+        if (connection) {
+            connection.release();
+            console.log('INFO : getUsers.js: Database connection manually released.');
+        } else {
+            console.log('INFO : getUsers.js: Database connection automatically released.');
+        }
     }
 }
 
-getUsers();
+// getUsers();
 
 export default getUsers;
